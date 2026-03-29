@@ -175,16 +175,17 @@ function NewsApp() {
     const t = setInterval(update, 1000);
     return () => clearInterval(t);
   }, []);
+// eslint-disable-next-line react-hooks/exhaustive-deps
+useEffect(() => {
+  if (user?.id) {
+    try { setBookmarks(JSON.parse(localStorage.getItem(bookmarkKey) || '[]')); } catch { setBookmarks([]); }
+  }
+}, [user?.id]);
 
-  useEffect(() => {
-    if (user?.id) {
-      try { setBookmarks(JSON.parse(localStorage.getItem(bookmarkKey) || '[]')); } catch { setBookmarks([]); }
-    }
-  }, [user?.id]);
-
-  useEffect(() => {
-    if (user?.id) localStorage.setItem(bookmarkKey, JSON.stringify(bookmarks));
-  }, [bookmarks, user?.id]);
+// eslint-disable-next-line react-hooks/exhaustive-deps
+useEffect(() => {
+  if (user?.id) localStorage.setItem(bookmarkKey, JSON.stringify(bookmarks));
+}, [bookmarks, user?.id]);
 
   const toggleBookmark = (article) => {
     setBookmarks(prev => prev.find(b => b.url === article.url) ? prev.filter(b => b.url !== article.url) : [...prev, article]);
