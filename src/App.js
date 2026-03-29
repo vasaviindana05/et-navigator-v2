@@ -23,6 +23,8 @@ const CATEGORY_IMAGES = {
 const PROXIES = [
   (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
   (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+  (url) => `https://thingproxy.freeboard.io/fetch/${url}`,
+  (url) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
 ];
 
 const NAV_LINKS = ['Home', 'Markets', 'Tech', 'Wealth', 'IPO', 'News', 'Industry', 'Politics', 'AI', 'Opinion'];
