@@ -1,70 +1,185 @@
-# Getting Started with Create React App
+# ET Navigator ⚡
+### AI-Powered Financial News Intelligence Platform
+> Built for **ET Gen AI Hackathon — Phase 2: Build Sprint**
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+**Live Demo:** [et-navigator2.vercel.app](https://et-navigator2.vercel.app)  
+**GitHub:** [vasaviindana05/et-navigator-v2](https://github.com/vasaviindana05/et-navigator-v2)
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 🎯 What is ET Navigator?
 
-### `npm start`
+ET Navigator is an AI-powered financial news intelligence platform that delivers instant, personalized briefings from **The Economic Times** — with real-time market data, sentiment analysis, and investor impact insights.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Instead of spending 30 minutes reading dozens of articles, users get a **3-sentence AI briefing in under 3 seconds** — powered by Groq's LLaMA 3.1 model.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+---
 
-### `npm test`
+## ✨ Key Features
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+| Feature | Description |
+|---------|-------------|
+| ⚡ **AI News Briefing** | 3-sentence Groq LLM summary — straight to facts, no fluff |
+| 📊 **Live Market Ticker** | Real-time Nifty, Sensex, Gold, USD/INR — updates every 4 seconds |
+| 🔴 **Breaking News Banner** | Rotating live ET headlines with pulsing LIVE badge |
+| 📈 **Sentiment Analysis** | AI-driven Positive / Negative / Neutral badge on every search |
+| 💼 **Investor Impact** | One-sentence AI insight on how news affects traders |
+| 🔍 **Follow-up Questions** | 3 AI-generated questions for deeper topic exploration |
+| 💬 **Ask Anything** | Inline conversational Q&A — ask any finance question |
+| 🔖 **Smart Bookmarks** | Per-user bookmark storage via Clerk auth |
+| 📱 **Mobile Responsive** | 1-column on mobile, 3-column on desktop |
+| 🧭 **Market Mood Widget** | Fear/Greed indicator in the sidebar |
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 🏗️ Architecture
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```
+User Browser (React App)
+        │
+        ├──► Clerk Auth (Google OAuth) — Authentication
+        │
+        ├──► ET RSS Feeds (via CORS Proxy Fallbacks) — News Data
+        │         └── allorigins.win → corsproxy.io → thingproxy (fallbacks)
+        │
+        ├──► Groq API (LLaMA 3.1 8B) — AI Briefings
+        │         ├── News Summarizer Agent
+        │         ├── Sentiment + Investor Impact Agent (parallel)
+        │         └── Follow-up Questions Agent (parallel)
+        │
+        └──► Unsplash API — Article Images
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Deployed on: Vercel (Frontend + Serverless Functions + CDN)
+```
 
-### `npm run eject`
+### Agent Roles
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+| Agent | Role |
+|-------|------|
+| **News Fetcher Agent** | Fetches ET RSS feeds via CORS proxy fallbacks. Parses XML to extract articles. |
+| **AI Summarizer Agent** | Sends article context to Groq LLM. Returns 3-sentence briefing. |
+| **Insights Agent** | Parallel Groq call for sentiment + investor impact JSON. |
+| **Follow-up Agent** | Generates 3 follow-up questions from summary. Returns JSON array. |
+| **Image Agent** | Calls Unsplash per article using first 4 title words. Falls back to category image. |
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+---
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## 🛠️ Tech Stack
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+| Layer | Technology | Why |
+|-------|-----------|-----|
+| **Frontend** | React.js (CRA) | Component-based UI, fast re-renders for live data |
+| **AI / LLM** | Groq API (LLaMA 3.1 8B) | Free tier, ultra-fast inference for briefings |
+| **Auth** | Clerk | Google OAuth, per-user sessions, easy integration |
+| **Styling** | CSS-in-JS (inline styles) | No external dependencies, full dark theme control |
+| **Images** | Unsplash API | Free high-quality news-relevant images |
+| **Deploy** | Vercel | Zero-config deploy, CDN, serverless functions |
 
-## Learn More
+### npm Packages
+```json
+{
+  "react": "^18.x",
+  "react-dom": "^18.x",
+  "react-scripts": "5.x",
+  "@clerk/clerk-react": "latest"
+}
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 🚀 Getting Started
 
-### Code Splitting
+### Prerequisites
+- Node.js v18+
+- npm
+- Vercel CLI (`npm install -g vercel`)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### 1. Clone the repo
+```bash
+git clone https://github.com/vasaviindana05/et-navigator-v2.git
+cd et-navigator-v2
+npm install
+```
 
-### Analyzing the Bundle Size
+### 2. Set up environment variables
+Create a `.env` file in the root:
+```env
+REACT_APP_GROQ_KEY=your_groq_api_key
+REACT_APP_UNSPLASH_KEY=your_unsplash_api_key
+REACT_APP_CLERK_PUBLISHABLE_KEY=your_clerk_key
+DISABLE_ESLINT_PLUGIN=true
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+Get your free keys:
+- Groq: [console.groq.com](https://console.groq.com)
+- Unsplash: [unsplash.com/developers](https://unsplash.com/developers)
+- Clerk: [clerk.com](https://clerk.com)
 
-### Making a Progressive Web App
+### 3. Run locally
+```bash
+vercel dev
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### 4. Deploy to production
+```bash
+vercel --prod
+```
 
-### Advanced Configuration
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## 📁 Project Structure
 
-### Deployment
+```
+et-navigator-v2/
+├── api/
+│   ├── claude.js       # Anthropic API proxy (serverless)
+│   └── feed.js         # RSS feed proxy (serverless)
+├── public/
+│   ├── index.html
+│   └── et-logo.jpg
+├── src/
+│   ├── App.js          # Main application (all components)
+│   ├── App.css         # Global styles
+│   └── index.js        # Entry point
+├── .gitignore
+├── package.json
+├── vercel.json         # Vercel configuration
+└── README.md
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+---
 
-### `npm run build` fails to minify
+## 🔒 Security
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- API keys stored as **Vercel environment variables** — never exposed in client-side code
+- CORS handled via **serverless proxy functions** in `/api`
+- Authentication secured via **Clerk** with Google OAuth
+- `.env` file excluded from Git via `.gitignore`
+
+---
+
+## 📊 Impact
+
+| Metric | Value |
+|--------|-------|
+| **Time to briefing** | < 3 seconds |
+| **Articles analyzed** | 9+ per search |
+| **Cost to users** | Free |
+| **Platforms** | Web + Mobile |
+| **News sources** | ET RSS (Top News, Markets, Tech, Wealth) |
+
+---
+
+## 👤 About
+
+**Name:** Gnana Vasavi Indana  
+**Major:** Computer Science  
+**Batch:** 2023–2027  
+**Team:** RAHU (Individual Participation)  
+**Hackathon:** ET Gen AI Hackathon — Phase 2: Build Sprint
+
+---
+
+## 📄 License
+
+This project was built for the ET Gen AI Hackathon. All news content belongs to The Economic Times.
