@@ -93,7 +93,6 @@ async function getUnsplashImage(title, category) {
   } catch { return CATEGORY_IMAGES[category] || CATEGORY_IMAGES['Home']; }
 }
 
-// ── Ticker ─────────────────────────────────────────────────
 function Ticker({ stocks }) {
   return (
     <div style={{ background: '#0a0a0a', borderBottom: '1px solid #cc0000', padding: '5px 0', overflow: 'hidden' }}>
@@ -113,7 +112,6 @@ function Ticker({ stocks }) {
   );
 }
 
-// ── Login ──────────────────────────────────────────────────
 function LoginPage() {
   return (
     <div style={{ minHeight: '100vh', background: '#0d0d0d', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -139,7 +137,6 @@ function LoginPage() {
   );
 }
 
-// ── Main App ───────────────────────────────────────────────
 function NewsApp() {
   const { user } = useUser();
   const bookmarkKey = `et_bookmarks_${user?.id}`;
@@ -159,8 +156,15 @@ function NewsApp() {
   const [dateStr, setDateStr]               = useState('');
   const [copiedIndex, setCopiedIndex]       = useState(null);
 
-  useEffect(() => { const t = setInterval(() => setIndices(getIndices()), 4000); return () => clearInterval(t); }, []);
-  useEffect(() => { const t = setInterval(() => setBreakingIdx(i => (i + 1) % BREAKING.length), 4500); return () => clearInterval(t); }, []);
+  useEffect(() => {
+    const t = setInterval(() => setIndices(getIndices()), 4000);
+    return () => clearInterval(t);
+  }, []);
+
+  useEffect(() => {
+    const t = setInterval(() => setBreakingIdx(i => (i + 1) % BREAKING.length), 4500);
+    return () => clearInterval(t);
+  }, []);
 
   useEffect(() => {
     const update = () => {
@@ -175,17 +179,18 @@ function NewsApp() {
     const t = setInterval(update, 1000);
     return () => clearInterval(t);
   }, []);
-// eslint-disable-next-line react-hooks/exhaustive-deps
-useEffect(() => {
-  if (user?.id) {
-    try { setBookmarks(JSON.parse(localStorage.getItem(bookmarkKey) || '[]')); } catch { setBookmarks([]); }
-  }
-}, [user?.id]);
 
-// eslint-disable-next-line react-hooks/exhaustive-deps
-useEffect(() => {
-  if (user?.id) localStorage.setItem(bookmarkKey, JSON.stringify(bookmarks));
-}, [bookmarks, user?.id]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (user?.id) {
+      try { setBookmarks(JSON.parse(localStorage.getItem(bookmarkKey) || '[]')); } catch { setBookmarks([]); }
+    }
+  }, [user?.id]);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (user?.id) localStorage.setItem(bookmarkKey, JSON.stringify(bookmarks));
+  }, [bookmarks, user?.id]);
 
   const toggleBookmark = (article) => {
     setBookmarks(prev => prev.find(b => b.url === article.url) ? prev.filter(b => b.url !== article.url) : [...prev, article]);
@@ -249,7 +254,6 @@ useEffect(() => {
       setArticles(mapped);
       if (searchTopic.trim()) {
         const articlesText = mapped.map((a, i) => `${i + 1}: ${a.title}. ${a.description}`).join('\n');
-        // ✅ No "Here's a summary" intro
         const summary = await callAI(
           `Summarize these articles about "${searchTopic}" in 3 sentences. Do NOT start with "Here's a summary", "Here are", or any intro phrase. Jump straight into the facts:\n\n${articlesText}`,
           400
@@ -284,7 +288,7 @@ useEffect(() => {
     finally { setLoading(false); }
   };
 
-  // eslint-disable-next-line
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { fetchNews('', 'Home'); }, []);
 
   const displayArticles = showBookmarks ? bookmarks : articles;
@@ -294,7 +298,6 @@ useEffect(() => {
   return (
     <div style={{ background: '#0d0d0d', minHeight: '100vh', color: '#e0e0e0' }}>
 
-      {/* Ticker */}
       <Ticker stocks={indices} />
 
       {/* Breaking News */}
@@ -310,12 +313,9 @@ useEffect(() => {
           <span style={{ background: '#cc0000', color: '#fff', fontWeight: 900, fontSize: '22px', padding: '4px 10px', borderRadius: '4px', fontFamily: 'serif', letterSpacing: '1px' }}>ET</span>
           <span style={{ fontWeight: 700, fontSize: '16px', color: '#fff', fontFamily: 'serif' }}>The Economic Times</span>
         </div>
-
-        {/* Clock with seconds */}
         <div style={{ background: '#1a1a1a', border: '1px solid #cc0000', borderRadius: '20px', padding: '5px 14px', fontSize: '12px', color: '#e0e0e0', fontFamily: 'monospace', letterSpacing: '0.5px' }}>
           {dateStr}
         </div>
-
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <input type="text" placeholder="Search news..." value={topic}
             onChange={e => setTopic(e.target.value)}
@@ -375,7 +375,6 @@ useEffect(() => {
         <div style={{ background: '#111', borderBottom: '1px solid #2a2a2a', borderLeft: '4px solid #cc0000', padding: '18px 20px', position: 'relative', overflow: 'hidden' }}>
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg,#cc0000,#ff6600,#cc0000)', backgroundSize: '200%', animation: 'glowbar 2s linear infinite' }} />
           <style>{`@keyframes glowbar{0%{background-position:0%}100%{background-position:200%}} @keyframes spin{to{transform:rotate(360deg)}} @keyframes shimmer{0%,100%{opacity:1}50%{opacity:0.4}}`}</style>
-
           {loading ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#888' }}>
               <div style={{ width: 20, height: 20, border: '2px solid #cc000033', borderTop: '2px solid #cc0000', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
@@ -383,7 +382,6 @@ useEffect(() => {
             </div>
           ) : (
             <>
-              {/* Header row */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px', flexWrap: 'wrap' }}>
                 <strong style={{ color: '#cc0000', fontSize: '12px', letterSpacing: '1px', fontFamily: 'sans-serif' }}>⚡ AI SUMMARY</strong>
                 {sentiment && (
@@ -392,18 +390,12 @@ useEffect(() => {
                   </span>
                 )}
               </div>
-
-              {/* Summary text */}
               <p style={{ fontSize: '15px', lineHeight: '1.9', color: '#ccc', marginBottom: '14px', fontFamily: 'sans-serif' }}>{result}</p>
-
-              {/* Investor Impact */}
               {investorImpact && (
                 <div style={{ background: '#0a0a0a', borderLeft: '3px solid #ffaa00', borderRadius: '4px', padding: '10px 14px', fontSize: '13px', color: '#ffcc44', marginBottom: '14px' }}>
                   💼 <strong>Investor Impact:</strong> {investorImpact}
                 </div>
               )}
-
-              {/* Follow-ups */}
               {followUps.length > 0 && (
                 <div style={{ marginBottom: '14px' }}>
                   <span style={{ fontSize: '11px', color: '#666', fontFamily: 'sans-serif', fontWeight: 600 }}>🔍 Explore: </span>
@@ -412,8 +404,6 @@ useEffect(() => {
                   ))}
                 </div>
               )}
-
-              {/* ✅ Bigger ask anything textarea */}
               <textarea
                 placeholder="Ask anything about this topic..."
                 rows={3}
@@ -425,14 +415,7 @@ useEffect(() => {
                     handleAskAnything(q);
                   }
                 }}
-                style={{
-                  width: '100%', boxSizing: 'border-box',
-                  background: '#1a1a1a', border: '1px solid #2a2a2a',
-                  borderRadius: '8px', padding: '12px 14px',
-                  color: '#e0e0e0', fontSize: '14px', outline: 'none',
-                  fontFamily: 'sans-serif', resize: 'vertical', minHeight: '90px',
-                  lineHeight: '1.6',
-                }}
+                style={{ width: '100%', boxSizing: 'border-box', background: '#1a1a1a', border: '1px solid #2a2a2a', borderRadius: '8px', padding: '12px 14px', color: '#e0e0e0', fontSize: '14px', outline: 'none', fontFamily: 'sans-serif', resize: 'vertical', minHeight: '90px', lineHeight: '1.6' }}
               />
               <p style={{ fontSize: '11px', color: '#555', marginTop: '5px', fontFamily: 'sans-serif' }}>Press Enter to ask • Shift+Enter for new line</p>
             </>
@@ -443,7 +426,7 @@ useEffect(() => {
       {/* 3-col Layout */}
       <div style={{ display: 'grid', gridTemplateColumns: '240px 1fr 260px', gap: 0, maxWidth: '1400px', margin: '0 auto', padding: '20px', alignItems: 'start' }}>
 
-        {/* LEFT — Today's News */}
+        {/* LEFT */}
         <div style={{ borderRight: '1px solid #1f1f1f', paddingRight: '18px' }}>
           <div style={{ fontSize: '12px', fontWeight: 800, color: '#cc0000', fontFamily: 'sans-serif', borderBottom: '2px solid #cc0000', paddingBottom: '6px', marginBottom: '14px', textTransform: 'uppercase', letterSpacing: '1px' }}>
             📰 Today's News
@@ -451,7 +434,7 @@ useEffect(() => {
           {(displayArticles.length > 0 ? displayArticles : articles).slice(0, 7).map((article, i) => (
             <div key={i} style={{ marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px solid #1a1a1a' }}>
               <a href={article.url} target="_blank" rel="noreferrer"
-                style={{ textDecoration: 'none', color: '#ccc', fontSize: '12px', lineHeight: '1.6', fontWeight: 500, display: 'block', fontFamily: 'sans-serif', transition: 'color 0.2s' }}
+                style={{ textDecoration: 'none', color: '#ccc', fontSize: '12px', lineHeight: '1.6', fontWeight: 500, display: 'block', fontFamily: 'sans-serif' }}
                 onMouseEnter={e => e.target.style.color = '#cc0000'}
                 onMouseLeave={e => e.target.style.color = '#ccc'}
               >{article.title}</a>
@@ -465,7 +448,7 @@ useEffect(() => {
           ))}
         </div>
 
-        {/* CENTER — News Grid */}
+        {/* CENTER */}
         <div style={{ padding: '0 18px' }}>
           {topic && result && (
             <div style={{ fontSize: '13px', color: '#666', fontFamily: 'sans-serif', marginBottom: '14px' }}>
@@ -477,7 +460,6 @@ useEffect(() => {
               🔖 Saved Articles ({bookmarks.length})
             </div>
           )}
-
           {loading ? (
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
               {[1,2,3,4].map(i => (
@@ -503,7 +485,6 @@ useEffect(() => {
                       style={{ width: '100%', height: '160px', objectFit: 'cover' }}
                       onError={e => { e.target.src = CATEGORY_IMAGES['Home']; }}
                     />
-                    {/* ✅ No read time badge */}
                     <span style={{ position: 'absolute', top: 8, left: 8, background: '#cc0000', color: '#fff', fontSize: '9px', fontWeight: 800, padding: '2px 7px', borderRadius: '3px', letterSpacing: '1px', fontFamily: 'sans-serif' }}>LATEST</span>
                   </div>
                   <div style={{ padding: '14px' }}>
@@ -525,7 +506,6 @@ useEffect(() => {
               ))}
             </div>
           )}
-
           {showBookmarks && bookmarks.length === 0 && (
             <div style={{ textAlign: 'center', padding: '60px 0', color: '#444', fontFamily: 'sans-serif' }}>
               <div style={{ fontSize: '40px', marginBottom: '12px' }}>🔖</div>
@@ -534,10 +514,8 @@ useEffect(() => {
           )}
         </div>
 
-        {/* RIGHT — Sidebar */}
+        {/* RIGHT */}
         <div style={{ borderLeft: '1px solid #1f1f1f', paddingLeft: '18px' }}>
-
-          {/* Trending */}
           <div style={{ marginBottom: '22px' }}>
             <div style={{ fontSize: '12px', fontWeight: 800, color: '#cc0000', fontFamily: 'sans-serif', borderBottom: '2px solid #cc0000', paddingBottom: '6px', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '1px' }}>🔥 Trending</div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
@@ -551,8 +529,6 @@ useEffect(() => {
               ))}
             </div>
           </div>
-
-          {/* Top Gainers */}
           <div style={{ marginBottom: '22px' }}>
             <div style={{ fontSize: '12px', fontWeight: 800, color: '#cc0000', fontFamily: 'sans-serif', borderBottom: '2px solid #cc0000', paddingBottom: '6px', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '1px' }}>📈 Top Gainers</div>
             {TOP_GAINERS.map((s, i) => (
@@ -568,8 +544,6 @@ useEffect(() => {
               </div>
             ))}
           </div>
-
-          {/* Market Mood */}
           <div>
             <div style={{ fontSize: '12px', fontWeight: 800, color: '#cc0000', fontFamily: 'sans-serif', borderBottom: '2px solid #cc0000', paddingBottom: '6px', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '1px' }}>🧭 Market Mood</div>
             <div style={{ background: '#111', border: '1px solid #2a2a2a', borderRadius: '8px', padding: '14px', textAlign: 'center' }}>
@@ -584,7 +558,6 @@ useEffect(() => {
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>
